@@ -1,0 +1,102 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+df=pd.read_csv("C:/Users/CSE WPT/Downloads/archive (23)/Advertising.csv")
+df.head()
+
+df.shape
+
+df.isna().sum()
+
+df.duplicated().any()
+
+fig, axs = plt.subplots(3, figsize = (5,5))
+plt1 = sns.boxplot(df['TV'], ax = axs[0])
+plt2 = sns.boxplot(df['Newspaper'], ax = axs[1])
+plt3 = sns.boxplot(df['Radio'], ax = axs[2])
+plt.tight_layout()
+
+sns.distplot(df['Sales']);
+
+sns.pairplot(df, x_vars=['TV', 'Radio', 'Newspaper'], y_vars='Sales', height=4, aspect=1, kind='scatter')
+plt.show()
+
+sns.heatmap(df.corr(), annot = True)
+plt.show()
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn import metrics
+
+x = df[['TV']]
+y = df['Sales']
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.3, random_state = 100)
+
+slr= LinearRegression()  
+slr.fit(x_train, y_train)
+
+print('Intercept: ', slr.intercept_)
+print('Coefficient:', slr.coef_)
+
+print('Regression Equation: Sales = 6.948 + 0.054 * TV')
+
+plt.scatter(x_train, y_train)
+plt.plot(x_train, 6.948 + 0.054*x_train, 'r')
+plt.show()
+
+y_pred_slr= slr.predict(x_test)  
+x_pred_slr= slr.predict(x_train)  
+
+print("Prediction for test set: {}".format(y_pred_slr))
+
+#Actual value and the predicted value
+slr_diff = pd.DataFrame({'Actual value': y_test, 'Predicted value': y_pred_slr})
+slr_diff
+
+slr.predict([[56]])
+
+from sklearn.metrics import accuracy_score
+print('R squared value of the model: {:.2f}'.format(slr.score(x,y)*100))
+
+meanAbErr = metrics.mean_absolute_error(y_test, y_pred_slr)
+meanSqErr = metrics.mean_squared_error(y_test, y_pred_slr)
+rootMeanSqErr = np.sqrt(metrics.mean_squared_error(y_test, y_pred_slr))
+
+print('Mean Absolute Error:', meanAbErr)
+print('Mean Square Error:', meanSqErr)
+print('Root Mean Square Error:', rootMeanSqErr)
+
+x = df[['TV', 'Radio', 'Newspaper']]
+y = df['Sales']
+
+x_train, x_test, y_train, y_test= train_test_split(x, y, test_size= 0.3, random_state=100)  
+
+mlr= LinearRegression()  
+mlr.fit(x_train, y_train) 
+
+print(mlr.intercept_)
+# pair the feature names with the coefficients
+list(zip(x, mlr.coef_))
+
+y_pred_mlr= mlr.predict(x_test)  
+x_pred_mlr= mlr.predict(x_train)  
+
+print("Prediction for test set: {}".format(y_pred_mlr))
+
+mlr_diff = pd.DataFrame({'Actual value': y_test, 'Predicted value': y_pred_mlr})
+mlr_diff
+
+mlr.predict([[56, 55, 67]])
+
+print('R squared value of the model: {:.2f}'.format(mlr.score(x,y)*100))
+
+meanAbErr = metrics.mean_absolute_error(y_test, y_pred_mlr)
+meanSqErr = metrics.mean_squared_error(y_test, y_pred_mlr)
+rootMeanSqErr = np.sqrt(metrics.mean_squared_error(y_test, y_pred_mlr))
+
+print('Mean Absolute Error:', meanAbErr)
+print('Mean Square Error:', meanSqErr)
+print('Root Mean Square Error:', rootMeanSqErr)
+
